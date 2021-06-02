@@ -1,29 +1,43 @@
-// node has express
-// deno has oak -- modelled after koa, which is the successor of express
-// koa is a web framework for node built on the concept of generators
-// oak does not come with middleware the same way koa does
+// oak contains prebuilt router middleware that allows to handle different
+// routes, params, and queries
 
-// import Application object from the oak library
-import { Application } from "https://deno.land/x/oak/mod.ts";
+// import Router and Application objects from the oak library
+import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 
 // create new instance of the Application class
 const app = new Application();
+
+// create new instance of Router class
+const router = new Router();
+
 const port = 3001;
 
-// define a handler for the requesr
-// app.use is middleware - its a function that lets you do things with the request, and they will execute in order
-// ctx -- current context
-// next -- deno is waiting for next to be called before resolving the request
-// next runs the next piece of middleware, which sets of 
-app.use((ctx, next) => {
-    ctx.response.body = "Hello World";
+// create a handler for a "GET" reqyest to "/"
+// ie the root route
+router.get("/", (ctx) => {
+    ctx.response.body = "Welcome to Oak";
+});
+// the app will only respond to GET requests on the / route
+// in the previous version, the app would respond to any request at all
+
+// add an additional route
+router.get("/users", (ctx) => {
+    ctx.response.body = "Wlcome User";
 });
 
-console.log(`Now listening on http://0.0.0.0:${port}`)
-app.listen(`0.0.0.0:${port}`)
+// and another one
+router.get("/users/:name", (ctx) => {
+    ctx.response.body = `Welcome ${ctx.params.name}`;
+});
+
+// tell the app to use the router as middleware
+app.use(router.routes());
+
 
 // tell the app to listen on port 3001
-console.log(`Now listening on http://0.0.0.0:3001`);
+console.log(`Now listening on http://0.0.0.0:${port}`);
 await app.listen({ port });
 
-// deno run --allow-net --watch --unstable app.ts
+
+
+// deno run --allow-net app.ts

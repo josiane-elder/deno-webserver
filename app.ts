@@ -1,53 +1,29 @@
-  // how to parse route params such as /:name ?
-    // there is a node package (route-parser) that can do this for us
-    // but how to get this in deno? (where's the url)??
+// node has express
+// deno has oak -- modelled after koa, which is the successor of express
+// koa is a web framework for node built on the concept of generators
+// oak does not come with middleware the same way koa does
 
-    // if a package is isomorphic (works in the browser) 
-    // should be able to use it with deno
+// import Application object from the oak library
+import { Application } from "https://deno.land/x/oak/mod.ts";
 
-    // there are some services that allow to import a package from npm via URL
-    // this won't work in deno because it uses commonJS syntax 
-    // is module.exports = Route;
-    // deno only supports es modules
+// create new instance of the Application class
+const app = new Application();
+const port = 3001;
 
-    // tere is a service called jpsm that takes a module by url and gives a esmodule compatible import/export
+// define a handler for the requesr
+// app.use is middleware - its a function that lets you do things with the request, and they will execute in order
+// ctx -- current context
+// next -- deno is waiting for next to be called before resolving the request
+// next runs the next piece of middleware, which sets of 
+app.use((ctx, next) => {
+    ctx.response.body = "Hello World";
+});
 
+console.log(`Now listening on http://0.0.0.0:${port}`)
+app.listen(`0.0.0.0:${port}`)
 
-import routeParser from "https://dev.jspm.io/route-parser@0.0.5";
-// inport ts types for route parser
-import RouteParser from "https://unpkg.com/@types/route-parser@0.1.3/index.d.ts";
-import { serve } from 'https://deno.land/std/http/server.ts';
+// tell the app to listen on port 3001
+console.log(`Now listening on http://0.0.0.0:3001`);
+await app.listen({ port });
 
-const Route = routeParser as typeof RouteParser;
-
-const PORT = 3001;
-const HOSTNAME = "0.0.0.0";
-
-const server = serve({ hostname: HOSTNAME, port: PORT });
-
-// use an infinite for loop to handly any requests that come in 
-// by setting the response property on the request
-
-// start the server and listen for incoming requests
-console.log(`Server is now running on: ttp://${HOSTNAME}:${PORT}`);
-
-const route = new Route("/:name");
-
-// return html
-for await (const req of server) {
-  
-    const html = await Deno.readFile("index.html");
-
-    req.respond({ 
-        body: html,
-    });
- 
-  
-}
-
-
-// deno run --allow-net=0.0.0.0:3001 --allow-read=. app.ts
-// need to give explicit read access
-
-
-
+// deno run --allow-net --watch --unstable app.ts

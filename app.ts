@@ -1,9 +1,6 @@
-// oak contains prebuilt router middleware that allows to handle different
-// routes, params, and queries
-
-// import Router and Application objects from the oak library
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-
+import { Application, Router, Context } from './deps.ts';
+import * as indexRouter from "./routes/indexRouter.ts";
+import * as userRouter from "./routes/userRouter.ts";
 // create new instance of the Application class
 const app = new Application();
 
@@ -12,23 +9,8 @@ const router = new Router();
 
 const port = 3001;
 
-// create a handler for a "GET" reqyest to "/"
-// ie the root route
-router.get("/", (ctx) => {
-    ctx.response.body = "Welcome to Oak";
-});
-// the app will only respond to GET requests on the / route
-// in the previous version, the app would respond to any request at all
-
-// add an additional route
-router.get("/users", (ctx) => {
-    ctx.response.body = "Wlcome User";
-});
-
-// and another one
-router.get("/users/:name", (ctx) => {
-    ctx.response.body = `Welcome ${ctx.params.name}`;
-});
+indexRouter.use("/", router);
+userRouter.use("/users", router);
 
 // tell the app to use the router as middleware
 app.use(router.routes());

@@ -36,25 +36,18 @@ const route = new Route("/:name");
 // return html
 for await (const req of server) {
   
-    const match: any = route.match(req.url);
+    const html = await Deno.readFile("index.html");
 
-    // check to see if the name was passed in
-    // if not, throw a 500 error
-    if (match.name) {
-        req.respond({ 
-            body: `Hello, ${match.name}`,
-        });
-    } else {
-        req.respond({ 
-            body: "Please pass a route name.",
-        });
-    }
+    req.respond({ 
+        body: html,
+    });
+ 
   
 }
 
 
-// deno run --allow-net=0.0.0.0:3001 app.ts
-// http://localhost:3000?name=World
+// deno run --allow-net=0.0.0.0:3001 --allow-read=. app.ts
+// need to give explicit read access
 
 
 

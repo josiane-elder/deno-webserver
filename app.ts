@@ -10,9 +10,10 @@ const server = serve({ hostname: HOSTNAME, port: PORT });
 // start the server and listen for incoming requests
 console.log(`Server is now running on: ttp://${HOSTNAME}:${PORT}`);
 
+// return html
 for await (const req of server) {
     req.respond({ 
-        body: "Hello World",
+        body: "<h1>Hello World</h1>",
     });
 }
 
@@ -21,3 +22,5 @@ for await (const req of server) {
 // deno run --allow-net=0.0.0.0:3001 app.ts
 
 // our server is now running!
+
+
